@@ -6,5 +6,4 @@ requests>=2.31
 fastapi>=0.110
 uvicorn>=0.29
 pytest>=8.0
-# optional, only for the AI-written explanation
-anthropic>=0.40
+google-genai
