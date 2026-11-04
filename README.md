@@ -2,11 +2,9 @@
 
 **Plan your financial goals. Simulate possible futures. Make informed decisions.**
 
-Goal Planner is an interactive financial planning application that helps users understand how likely they are to achieve their financial goals through monthly investments (SIPs).
+Goal Planner is an interactive financial planning application that helps users estimate the likelihood of achieving their long-term financial goals through systematic monthly investments (SIPs).
 
 Instead of assuming a fixed rate of return, the application uses **Monte Carlo simulation** to generate thousands of possible investment outcomes using historical Nifty 50 Total Return Index (TRI) data and configurable return assumptions.
-
-Users can explore different investment amounts, time horizons, risk profiles and portfolio allocations to understand the uncertainty associated with long-term financial planning.
 
 🌐 **Live Demo:** https://goal-planner-q6rs.onrender.com/
 
@@ -16,169 +14,176 @@ Users can explore different investment amounts, time horizons, risk profiles and
 
 ## 🚀 Features
 
-### 1. Interactive Financial Goal Planning
+### 1. Financial Goal Planning
 - Create and manage multiple financial goals.
-- Set target amounts and investment horizons.
+- Set target amounts and investment durations.
 - Configure monthly SIP contributions.
 - Include existing savings.
-- Set annual SIP step-ups.
+- Configure annual SIP step-ups.
+- Account for inflation when estimating future targets.
 
 ### 2. Monte Carlo Simulation
-- Simulates 2,000 possible investment futures by default.
+- Generates 2,000 possible investment outcomes by default.
 - Uses historical Nifty 50 TRI calendar-year returns.
 - Supports historical bootstrap and normal return models.
-- Estimates the probability of achieving a financial goal.
-- Uses a fixed random seed for reproducible simulations.
+- Estimates the probability of reaching a financial target.
+- Uses reproducible random seeds for consistent simulations.
 
 ### 3. Risk-Based Asset Allocation
 
-The application suggests an equity, debt and gold allocation based on:
-- Investment duration.
-- User's risk appetite.
-- Portfolio allocation rules.
+The application calculates an equity, debt and gold allocation based on investment duration and risk appetite.
 
-Users can select:
+Available risk profiles:
 - Low risk
 - Medium risk
 - High risk
 
-### 4. Interactive Portfolio Visualization
+### 4. Portfolio Visualization
 
-Visualizes projected portfolio growth through:
-- Median portfolio projection (P50).
-- 10th percentile (P10).
-- 90th percentile (P90).
-- Middle 50% outcome range.
-- Target amount reference line.
+Understand possible investment outcomes using:
+- **P10:** Lower-range outcome.
+- **P50:** Median outcome.
+- **P90:** Higher-range outcome.
+- Portfolio projection bands.
+- Financial goal target reference.
 
 ### 5. Inflation Adjustment
 
-Supports an assumed annual inflation rate of 6%.
+The application supports an assumed annual inflation rate of 6%.
 
-The application adjusts the future target amount to account for inflation.
+Users can enable or disable inflation adjustment when calculating the future value of their financial goals.
 
 ### 6. SIP Recommendation
 
-If the simulated probability of achieving the goal is below 80%, the application estimates the monthly SIP required to reach approximately 80% simulated success probability.
+When the estimated probability of achieving a goal is below 80%, the application calculates an approximate monthly SIP required to reach an 80% success probability.
 
-### 7. Plain-Language Explanations
+### 7. AI-Powered Explanation with Google Gemini
 
-Provides understandable explanations of simulation results.
+The application optionally uses Google's Gemini API to explain simulation results in simple language.
 
-Optionally supports Claude-generated explanations when an Anthropic API key is configured. Otherwise, it uses a built-in explanation template.
+The AI explanation is designed to:
+- Explain the simulation results to first-time investors.
+- Describe the probability of achieving a financial goal.
+- Explain the P10, P50 and P90 outcomes.
+- Avoid exaggerated claims and buy/sell recommendations.
+- Clarify that simulations are not guarantees.
+
+If Gemini is unavailable or not configured, the application automatically falls back to a built-in explanation template.
 
 ---
 
 ## 🛠️ Technology Stack
 
-| Component | Technologies |
+| Component | Technology |
 |---|---|
 | Frontend | HTML, CSS, JavaScript |
 | Backend | Python, FastAPI |
-| Alternative UI | Streamlit |
-| Simulation | NumPy |
+| Alternative Interface | Streamlit |
+| Numerical Computation | NumPy |
 | Data Processing | Pandas |
-| Visualization | Matplotlib, SVG |
-| Validation | Pydantic |
+| API Validation | Pydantic |
+| Historical Data | Nifty 50 TRI |
+| AI Integration | Google Gemini API |
 | Testing | Pytest |
 | Deployment | Render |
-| Version Control | Git, GitHub |
-| Optional AI | Anthropic Claude API |
+| Version Control | Git and GitHub |
 
 ---
 
-## 🧠 How It Works
+## 🧠 System Architecture
 
-Goal Planner follows a client-server architecture.
-
-1. **User Input:** The user enters financial goals, investment amount, duration, savings and risk appetite.
-2. **API Request:** The frontend sends the information to the FastAPI backend through a REST API.
-3. **Asset Allocation:** The allocation module determines the equity, debt and gold proportions.
-4. **Simulation Engine:** The Monte Carlo engine generates 2,000 possible investment scenarios.
-5. **Statistical Analysis:** The application calculates success probability and portfolio percentiles.
-6. **Visualization:** The frontend displays the results through interactive charts and probability indicators.
-7. **Explanation:** The application generates a plain-language summary of the results.
-
-### Application Architecture
+The application follows a client-server architecture.
 
 ```text
                  USER
                   |
                   v
-          Frontend (HTML/CSS/JS)
+          Frontend Interface
+             HTML / CSS / JS
                   |
                   v
-           FastAPI REST API
-             /api/simulate
+             FastAPI
+            /api/simulate
                   |
                   v
-          Asset Allocation
+          Goal Input Validation
                   |
                   v
-         Monte Carlo Engine
+          Asset Allocation Engine
                   |
-          +-------+-------+
-          |       |       |
-          v       v       v
-        Equity   Debt    Gold
-          |       |       |
-          +-------+-------+
+                  v
+          Monte Carlo Simulation
                   |
                   v
           Statistical Analysis
+           /       |       \
+          v        v        v
+         P10      P50      P90
                   |
-          +-------+-------+
-          |       |       |
-          v       v       v
-        P10      P50     P90
+                  v
+          Success Probability
                   |
                   v
           Explanation Engine
+             /          \
+            v            v
+         Gemini       Template
+             \          /
+              v        v
+             JSON Response
                   |
                   v
-          JSON Response
-                  |
-                  v
-          Frontend Visualization
+          Frontend Results
 ```
+
+### Simulation Workflow
+
+1. The user enters a financial goal, investment amount, duration and risk profile.
+2. The frontend sends the inputs to the FastAPI backend.
+3. The backend validates the request.
+4. The allocation module calculates the equity, debt and gold proportions.
+5. The simulation engine generates possible investment outcomes.
+6. Statistical analysis calculates success probability and outcome percentiles.
+7. The explanation engine generates a plain-language summary.
+8. The frontend displays the results.
 
 ---
 
 ## 📊 Simulation Methodology
 
-The application uses Monte Carlo simulation to model uncertainty in future investment returns.
+### Monte Carlo Simulation
 
-### Historical Equity Returns
+The application models uncertainty by simulating multiple possible investment futures.
 
-The default model uses Nifty 50 TRI calendar-year returns from 2006–2024.
+Each simulated future consists of yearly portfolio returns. Monthly SIP contributions are added throughout the investment period.
 
-Each simulated year randomly selects a historical equity return, with an adjustable return haircut.
+The simulation uses:
+- Historical bootstrap or normal equity returns.
+- Normal return assumptions for debt and gold.
+- Monthly compounding.
+- Annual SIP step-ups.
+- Existing savings as initial capital.
 
-### Debt and Gold
+### Asset Allocation
 
-Debt and gold returns are modeled using configurable normal distributions.
+The allocation engine uses investment duration and risk appetite.
 
-Default assumptions:
+The base equity allocation depends on the investment horizon, while the selected risk profile adjusts the equity percentage.
 
-- Debt: 7% mean annual return, 2.5% standard deviation.
-- Gold: 8% mean annual return, 13% standard deviation.
-
-### Portfolio Allocation
-
-The allocation depends on investment duration and risk appetite.
-
-The application uses simple rule-based allocation rather than claiming to provide an optimized investment portfolio.
+Gold allocation is capped at 10%.
 
 ### Statistical Measures
 
-| Metric | Meaning |
+| Metric | Explanation |
 |---|---|
-| P10 | 10th percentile outcome |
-| P50 | Median outcome |
-| P90 | 90th percentile outcome |
-| Success Probability | Percentage of simulated futures reaching the target |
+| P10 | 10% of simulated outcomes are at or below this value. |
+| P50 | Median simulated outcome. |
+| P90 | 90% of simulated outcomes are at or below this value. |
+| Success Probability | Percentage of simulated outcomes reaching the target. |
 
-**Important:** These are model-based estimates, not guaranteed investment returns.
+### Inflation
+
+The application uses an assumed annual inflation rate of 6% when inflation adjustment is enabled.
 
 ---
 
@@ -188,11 +193,8 @@ The application uses simple rule-based allocation rather than claiming to provid
 goal-planner/
 │
 ├── api.py
-│
 ├── app.py
-│
 ├── requirements.txt
-│
 ├── pytest.ini
 │
 ├── data/
@@ -220,15 +222,17 @@ goal-planner/
 
 ### Important Modules
 
-- `api.py` — FastAPI backend and simulation endpoint.
-- `app.py` — Alternative Streamlit interface.
-- `planner/allocation.py` — Risk-based asset allocation.
-- `planner/simulation.py` — Monte Carlo simulation engine.
-- `planner/data.py` — Historical returns and mutual fund NAV data.
-- `planner/explain.py` — Plain-language and optional AI explanations.
-- `planner/charts.py` — Portfolio visualization.
-- `static/index.html` — Main interactive web frontend.
-- `tests/` — Automated API and simulation tests.
+| File | Responsibility |
+|---|---|
+| `api.py` | FastAPI backend and simulation endpoint |
+| `app.py` | Alternative Streamlit interface |
+| `planner/allocation.py` | Risk-based asset allocation |
+| `planner/simulation.py` | Monte Carlo simulation engine |
+| `planner/data.py` | Historical return data and NAV utilities |
+| `planner/explain.py` | Template and Gemini explanations |
+| `planner/charts.py` | Portfolio visualization |
+| `static/index.html` | Main web frontend |
+| `tests/` | Automated tests |
 
 ---
 
@@ -236,9 +240,9 @@ goal-planner/
 
 ### Prerequisites
 
-- Python 3.10 or newer.
-- Git.
-- VS Code (recommended).
+- Python 3.10 or newer
+- Git
+- VS Code (recommended)
 
 ### 1. Clone the Repository
 
@@ -250,20 +254,20 @@ cd goal-planner
 
 ### 2. Create a Virtual Environment
 
-**Windows:**
+**Windows PowerShell:**
 
 ```powershell
-python -m venv venv
+python -m venv .venv
 
-venv\Scripts\activate
+.venv\Scripts\Activate.ps1
 ```
 
 **macOS/Linux:**
 
 ```bash
-python -m venv venv
+python -m venv .venv
 
-source venv/bin/activate
+source .venv/bin/activate
 ```
 
 ### 3. Install Dependencies
@@ -272,23 +276,43 @@ source venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-### 4. Run the FastAPI Application
+### 4. Configure Gemini API
 
-```bash
-uvicorn api:app --reload
+Create a Gemini API key through Google AI Studio.
+
+Set the key as an environment variable.
+
+**Windows PowerShell:**
+
+```powershell
+$env:GEMINI_API_KEY="YOUR_API_KEY"
 ```
 
-Open your browser:
+Optionally configure the model:
 
-http://localhost:8000
-
-### 5. Run the Alternative Streamlit Application
-
-```bash
-streamlit run app.py
+```powershell
+$env:GEMINI_MODEL="gemini-flash-latest"
 ```
 
-### 6. Run Automated Tests
+Never commit API keys to GitHub or include them in frontend JavaScript.
+
+### 5. Run the Application
+
+```bash
+python -m uvicorn api:app --reload
+```
+
+Open:
+
+http://127.0.0.1:8000
+
+### 6. Access API Documentation
+
+FastAPI automatically provides interactive API documentation.
+
+http://127.0.0.1:8000/docs
+
+### 7. Run Automated Tests
 
 ```bash
 pytest -q
@@ -297,8 +321,6 @@ pytest -q
 ---
 
 ## 🔌 API Documentation
-
-The application exposes a REST API through FastAPI.
 
 ### Simulation Endpoint
 
@@ -320,47 +342,38 @@ Example request:
   "risk": "medium",
   "mode": "bootstrap",
   "haircut": 0.03,
-  "use_ai": false
+  "use_ai": true
 }
 ```
 
+### Request Parameters
+
+| Parameter | Description |
+|---|---|
+| `goal.name` | Financial goal name |
+| `goal.target` | Target amount in today's rupees |
+| `goal.years` | Investment duration |
+| `goal.sip` | Monthly investment |
+| `goal.savings` | Existing savings |
+| `goal.step_up` | Annual SIP increase |
+| `goal.inflate` | Whether to adjust target for inflation |
+| `risk` | Low, medium or high |
+| `mode` | Bootstrap or normal |
+| `haircut` | Equity return adjustment |
+| `use_ai` | Whether to request an AI explanation |
+
+### Response
+
 The API returns:
 - Success probability.
-- Adjusted target.
+- Inflation-adjusted target.
 - Total invested amount.
 - Asset allocation.
-- P10, P50 and P90 values.
+- P10, P50 and P90 outcomes.
 - Portfolio projection bands.
-- SIP recommendation when required.
+- Additional goal results.
+- Recommended SIP when applicable.
 - Plain-language explanation.
-
-### Interactive API Documentation
-
-Once the backend is running, visit:
-
-http://localhost:8000/docs
-
----
-
-## 🧪 Testing
-
-The project includes automated tests for:
-
-- Monte Carlo simulation calculations.
-- SIP future-value calculations.
-- Annual SIP step-up calculations.
-- Reproducibility using random seeds.
-- Asset allocation constraints.
-- Probability monotonicity with increasing SIP.
-- API response structure.
-- Invalid request validation.
-- Frontend availability.
-
-Run the test suite:
-
-```bash
-pytest -q
-```
 
 ---
 
@@ -368,58 +381,72 @@ pytest -q
 
 The application is deployed using Render.
 
-**Live Application:**
+**Live Application:** https://goal-planner-q6rs.onrender.com/
 
-https://goal-planner-q6rs.onrender.com/
-
-Deployment configuration:
+### Render Configuration
 
 | Setting | Value |
 |---|---|
 | Platform | Render |
-| Repository | GitHub |
 | Framework | FastAPI |
 | Build Command | `pip install -r requirements.txt` |
 | Start Command | `uvicorn api:app --host 0.0.0.0 --port $PORT` |
 
+### Environment Variables
+
+Configure the following in Render's Environment settings:
+
+```text
+GEMINI_API_KEY=your_api_key
+GEMINI_MODEL=gemini-flash-latest
+```
+
+Keep API credentials private.
+
 ---
 
-## ⚠️ Limitations and Assumptions
+## 🧪 Testing
 
-This application is designed for educational and experimental financial planning.
+The project includes automated tests for simulation calculations and API behavior.
 
-Some limitations include:
+Run:
 
-- Historical equity returns do not predict future performance.
-- Only 19 calendar years of bundled equity history are available.
-- Asset classes are modeled as independent, which simplifies real market correlations.
+```bash
+pytest -q
+```
+
+---
+
+## ⚠️ Limitations and Disclaimer
+
+This application is intended for educational and experimental financial planning.
+
+Important limitations:
+- Historical returns do not predict future performance.
+- The simulation uses a limited historical equity dataset.
+- Equity, debt and gold returns are treated as independent, simplifying real-world correlations.
 - Yearly returns are spread evenly across 12 months.
 - Taxes, expense ratios, exit loads and transaction costs are not included.
-- Debt and gold returns are assumptions rather than sourced historical datasets.
-- The allocation strategy is rule-based and not a personalized investment recommendation.
+- Debt and gold returns rely on assumptions.
+- Asset allocation is rule-based, not a personalized investment recommendation.
+- AI-generated explanations may be imperfect.
 
-**Disclaimer:** This application is for educational purposes only. It does not provide financial advice or guarantee investment outcomes.
+**Disclaimer:** This application does not provide financial advice and does not guarantee investment outcomes. All simulation results are estimates based on assumptions and historical data.
 
 ---
 
 ## 🔮 Future Improvements
 
-Potential enhancements include:
-
 - User authentication and personalized portfolios.
 - Persistent storage for financial goals.
 - More historical asset-class datasets.
-- Portfolio optimization.
 - Improved market correlation modeling.
-- Additional investment performance metrics.
+- Portfolio optimization.
+- Additional risk and performance metrics.
 - Exportable financial planning reports.
 - Enhanced interactive dashboards.
 
 ---
-
-## 📜 License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 ---
 
@@ -429,7 +456,7 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 GitHub: https://github.com/preritpmd
 
-Project: [Goal Planner](https://goal-planner-q6rs.onrender.com/)
+Project: https://goal-planner-q6rs.onrender.com/
 
 ---
 
