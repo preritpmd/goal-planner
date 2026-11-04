@@ -1,63 +1,436 @@
-# Goal Planner
+# 💰 Goal Planner — Financial Goal Simulation
 
-A small Streamlit app that answers one question: *if I put this much away every month, how likely am I to reach my goal?*
+**Plan your financial goals. Simulate possible futures. Make informed decisions.**
 
-You give it a goal (target amount, years, monthly SIP, savings so far, risk appetite). It picks an equity/debt/gold split, runs a few thousand simulated futures, and tells you the chance of getting there, plus what a bad, typical and good outcome look like. If your odds are below 80% it works out roughly what SIP would get you there.
+Goal Planner is an interactive financial planning application that helps users understand how likely they are to achieve their financial goals through monthly investments (SIPs).
 
-I built this for a problem statement on investment planning for first-time investors. It is a learning project. It is not advice and it does not touch real money.
+Instead of assuming a fixed rate of return, the application uses **Monte Carlo simulation** to generate thousands of possible investment outcomes using historical Nifty 50 Total Return Index (TRI) data and configurable return assumptions.
 
-## Run it
+Users can explore different investment amounts, time horizons, risk profiles and portfolio allocations to understand the uncertainty associated with long-term financial planning.
 
-```bash
-git clone <your-repo-url>
-cd goal-planner
-python -m venv .venv
-source .venv/bin/activate      # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-streamlit run app.py
+🌐 **Live Demo:** https://goal-planner-q6rs.onrender.com/
+
+📂 **GitHub Repository:** https://github.com/preritpmd/goal-planner
+
+---
+
+## 🚀 Features
+
+### 1. Interactive Financial Goal Planning
+- Create and manage multiple financial goals.
+- Set target amounts and investment horizons.
+- Configure monthly SIP contributions.
+- Include existing savings.
+- Set annual SIP step-ups.
+
+### 2. Monte Carlo Simulation
+- Simulates 2,000 possible investment futures by default.
+- Uses historical Nifty 50 TRI calendar-year returns.
+- Supports historical bootstrap and normal return models.
+- Estimates the probability of achieving a financial goal.
+- Uses a fixed random seed for reproducible simulations.
+
+### 3. Risk-Based Asset Allocation
+
+The application suggests an equity, debt and gold allocation based on:
+- Investment duration.
+- User's risk appetite.
+- Portfolio allocation rules.
+
+Users can select:
+- Low risk
+- Medium risk
+- High risk
+
+### 4. Interactive Portfolio Visualization
+
+Visualizes projected portfolio growth through:
+- Median portfolio projection (P50).
+- 10th percentile (P10).
+- 90th percentile (P90).
+- Middle 50% outcome range.
+- Target amount reference line.
+
+### 5. Inflation Adjustment
+
+Supports an assumed annual inflation rate of 6%.
+
+The application adjusts the future target amount to account for inflation.
+
+### 6. SIP Recommendation
+
+If the simulated probability of achieving the goal is below 80%, the application estimates the monthly SIP required to reach approximately 80% simulated success probability.
+
+### 7. Plain-Language Explanations
+
+Provides understandable explanations of simulation results.
+
+Optionally supports Claude-generated explanations when an Anthropic API key is configured. Otherwise, it uses a built-in explanation template.
+
+---
+
+## 🛠️ Technology Stack
+
+| Component | Technologies |
+|---|---|
+| Frontend | HTML, CSS, JavaScript |
+| Backend | Python, FastAPI |
+| Alternative UI | Streamlit |
+| Simulation | NumPy |
+| Data Processing | Pandas |
+| Visualization | Matplotlib, SVG |
+| Validation | Pydantic |
+| Testing | Pytest |
+| Deployment | Render |
+| Version Control | Git, GitHub |
+| Optional AI | Anthropic Claude API |
+
+---
+
+## 🧠 How It Works
+
+Goal Planner follows a client-server architecture.
+
+1. **User Input:** The user enters financial goals, investment amount, duration, savings and risk appetite.
+2. **API Request:** The frontend sends the information to the FastAPI backend through a REST API.
+3. **Asset Allocation:** The allocation module determines the equity, debt and gold proportions.
+4. **Simulation Engine:** The Monte Carlo engine generates 2,000 possible investment scenarios.
+5. **Statistical Analysis:** The application calculates success probability and portfolio percentiles.
+6. **Visualization:** The frontend displays the results through interactive charts and probability indicators.
+7. **Explanation:** The application generates a plain-language summary of the results.
+
+### Application Architecture
+
+```text
+                 USER
+                  |
+                  v
+          Frontend (HTML/CSS/JS)
+                  |
+                  v
+           FastAPI REST API
+             /api/simulate
+                  |
+                  v
+          Asset Allocation
+                  |
+                  v
+         Monte Carlo Engine
+                  |
+          +-------+-------+
+          |       |       |
+          v       v       v
+        Equity   Debt    Gold
+          |       |       |
+          +-------+-------+
+                  |
+                  v
+          Statistical Analysis
+                  |
+          +-------+-------+
+          |       |       |
+          v       v       v
+        P10      P50     P90
+                  |
+                  v
+          Explanation Engine
+                  |
+                  v
+          JSON Response
+                  |
+                  v
+          Frontend Visualization
 ```
 
-That starts the Streamlit version. There is also a custom web frontend (FastAPI backend, plain HTML/JS, no build step):
+---
+
+## 📊 Simulation Methodology
+
+The application uses Monte Carlo simulation to model uncertainty in future investment returns.
+
+### Historical Equity Returns
+
+The default model uses Nifty 50 TRI calendar-year returns from 2006–2024.
+
+Each simulated year randomly selects a historical equity return, with an adjustable return haircut.
+
+### Debt and Gold
+
+Debt and gold returns are modeled using configurable normal distributions.
+
+Default assumptions:
+
+- Debt: 7% mean annual return, 2.5% standard deviation.
+- Gold: 8% mean annual return, 13% standard deviation.
+
+### Portfolio Allocation
+
+The allocation depends on investment duration and risk appetite.
+
+The application uses simple rule-based allocation rather than claiming to provide an optimized investment portfolio.
+
+### Statistical Measures
+
+| Metric | Meaning |
+|---|---|
+| P10 | 10th percentile outcome |
+| P50 | Median outcome |
+| P90 | 90th percentile outcome |
+| Success Probability | Percentage of simulated futures reaching the target |
+
+**Important:** These are model-based estimates, not guaranteed investment returns.
+
+---
+
+## 📁 Project Structure
+
+```text
+goal-planner/
+│
+├── api.py
+│
+├── app.py
+│
+├── requirements.txt
+│
+├── pytest.ini
+│
+├── data/
+│   └── nifty50_tri_calendar_returns.csv
+│
+├── planner/
+│   ├── __init__.py
+│   ├── allocation.py
+│   ├── charts.py
+│   ├── data.py
+│   ├── explain.py
+│   └── simulation.py
+│
+├── static/
+│   └── index.html
+│
+├── tests/
+│   ├── test_api.py
+│   └── test_simulation.py
+│
+├── .gitignore
+├── LICENSE
+└── README.md
+```
+
+### Important Modules
+
+- `api.py` — FastAPI backend and simulation endpoint.
+- `app.py` — Alternative Streamlit interface.
+- `planner/allocation.py` — Risk-based asset allocation.
+- `planner/simulation.py` — Monte Carlo simulation engine.
+- `planner/data.py` — Historical returns and mutual fund NAV data.
+- `planner/explain.py` — Plain-language and optional AI explanations.
+- `planner/charts.py` — Portfolio visualization.
+- `static/index.html` — Main interactive web frontend.
+- `tests/` — Automated API and simulation tests.
+
+---
+
+## ⚙️ Installation and Setup
+
+### Prerequisites
+
+- Python 3.10 or newer.
+- Git.
+- VS Code (recommended).
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/preritpmd/goal-planner.git
+
+cd goal-planner
+```
+
+### 2. Create a Virtual Environment
+
+**Windows:**
+
+```powershell
+python -m venv venv
+
+venv\Scripts\activate
+```
+
+**macOS/Linux:**
+
+```bash
+python -m venv venv
+
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+### 4. Run the FastAPI Application
 
 ```bash
 uvicorn api:app --reload
 ```
 
-then open http://localhost:8000. You write your goal as a sentence, and the chart, the "X in 100" dots and the suggested SIP update as you type.
+Open your browser:
 
-Run the tests with `pytest`.
+http://localhost:8000
 
-## How it works
+### 5. Run the Alternative Streamlit Application
 
-- `planner/allocation.py` - equity share depends on the goal's horizon (10% under 2 years, up to 70% past 10), shifted by risk appetite. Gold is capped at 10%, debt takes the rest.
-- `planner/simulation.py` - the Monte Carlo engine. Each run draws one return per year for each asset class, converts it to a monthly rate, and compounds the SIP month by month. Optional yearly step-up and inflation adjustment on the target.
-- `planner/data.py` - loads the bundled Nifty 50 TRI calendar-year returns, and can pull another fund's NAV history from [mfapi.in](https://www.mfapi.in/).
-- `planner/explain.py` - plain-language summary. A template by default, or Claude if `ANTHROPIC_API_KEY` is set.
-- `api.py` and `static/index.html` - the web frontend. `/api/simulate` runs the engine, the page draws everything.
-- `app.py` - the Streamlit UI. Goals live in an editable table, so you can compare several side by side.
+```bash
+streamlit run app.py
+```
 
-## Where the numbers come from
+### 6. Run Automated Tests
 
-- **Equity**: Nifty 50 total-return calendar-year returns for 2006-2024, in `data/nifty50_tri_calendar_returns.csv`. I read these off a Baroda BNP Paribas MF factsheet (Feb 2025), so they are rounded. Please check them against niftyindices.com before relying on them. By default each simulated year picks one of these real years at random, so a 2008-style crash (-51%) can happen.
-- **Haircut**: the 2006-2024 average is about 16.8% a year, which is high because of 2006-2009. The app subtracts 3 points by default. Change it in the sidebar.
-- **Debt (7% +/- 2.5%) and gold (8% +/- 13%)**: assumptions. I did not have a sourced history for them.
+```bash
+pytest -q
+```
 
-## What it gets wrong
+---
 
-- 19 years is a small sample, and one bull run in it dominates the average.
-- Asset classes are treated as independent. In real crashes they often aren't.
-- Returns are applied yearly and spread evenly across months, so there is no within-year volatility.
-- No tax, expense ratios, exit loads, or rebalancing costs.
-- The allocation rules are my own and are simply a starting point.
+## 🔌 API Documentation
 
-## Checking the maths
+The application exposes a REST API through FastAPI.
 
-`tests/test_simulation.py` compares the engine against the closed-form SIP future-value formula and against an independent loop for the step-up case, and checks things like "more SIP never lowers the odds" and "same seed, same answer".
+### Simulation Endpoint
 
-## Not tested
+**POST** `/api/simulate`
 
-The mfapi.in lookup and the Claude explanation need network access or an API key and are not covered by the tests. If either fails, the app falls back to the bundled data and the template text.
+Example request:
 
-## License
+```json
+{
+  "goal": {
+    "name": "House Down Payment",
+    "target": 2500000,
+    "years": 8,
+    "sip": 25000,
+    "savings": 100000,
+    "step_up": 0.05,
+    "inflate": true
+  },
+  "risk": "medium",
+  "mode": "bootstrap",
+  "haircut": 0.03,
+  "use_ai": false
+}
+```
 
-MIT
+The API returns:
+- Success probability.
+- Adjusted target.
+- Total invested amount.
+- Asset allocation.
+- P10, P50 and P90 values.
+- Portfolio projection bands.
+- SIP recommendation when required.
+- Plain-language explanation.
+
+### Interactive API Documentation
+
+Once the backend is running, visit:
+
+http://localhost:8000/docs
+
+---
+
+## 🧪 Testing
+
+The project includes automated tests for:
+
+- Monte Carlo simulation calculations.
+- SIP future-value calculations.
+- Annual SIP step-up calculations.
+- Reproducibility using random seeds.
+- Asset allocation constraints.
+- Probability monotonicity with increasing SIP.
+- API response structure.
+- Invalid request validation.
+- Frontend availability.
+
+Run the test suite:
+
+```bash
+pytest -q
+```
+
+---
+
+## ☁️ Deployment
+
+The application is deployed using Render.
+
+**Live Application:**
+
+https://goal-planner-q6rs.onrender.com/
+
+Deployment configuration:
+
+| Setting | Value |
+|---|---|
+| Platform | Render |
+| Repository | GitHub |
+| Framework | FastAPI |
+| Build Command | `pip install -r requirements.txt` |
+| Start Command | `uvicorn api:app --host 0.0.0.0 --port $PORT` |
+
+---
+
+## ⚠️ Limitations and Assumptions
+
+This application is designed for educational and experimental financial planning.
+
+Some limitations include:
+
+- Historical equity returns do not predict future performance.
+- Only 19 calendar years of bundled equity history are available.
+- Asset classes are modeled as independent, which simplifies real market correlations.
+- Yearly returns are spread evenly across 12 months.
+- Taxes, expense ratios, exit loads and transaction costs are not included.
+- Debt and gold returns are assumptions rather than sourced historical datasets.
+- The allocation strategy is rule-based and not a personalized investment recommendation.
+
+**Disclaimer:** This application is for educational purposes only. It does not provide financial advice or guarantee investment outcomes.
+
+---
+
+## 🔮 Future Improvements
+
+Potential enhancements include:
+
+- User authentication and personalized portfolios.
+- Persistent storage for financial goals.
+- More historical asset-class datasets.
+- Portfolio optimization.
+- Improved market correlation modeling.
+- Additional investment performance metrics.
+- Exportable financial planning reports.
+- Enhanced interactive dashboards.
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License. See the `LICENSE` file for details.
+
+---
+
+## 👨‍💻 Author
+
+**Prerit Devashetti**
+
+GitHub: https://github.com/preritpmd
+
+Project: [Goal Planner](https://goal-planner-q6rs.onrender.com/)
+
+---
+
+**Built to make financial planning more understandable through simulation, statistics and technology.**
