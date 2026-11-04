@@ -1,0 +1,10 @@
+streamlit>=1.66.1
+numpy>=1.26
+pandas>=2.1
+matplotlib>=3.8
+requests>=2.31
+fastapi>=0.110
+uvicorn>=0.29
+pytest>=8.0
+# optional, only for the AI-written explanation
+anthropic>=0.40
